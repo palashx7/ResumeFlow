@@ -20,5 +20,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN chmod +x ./start.sh
 
+# Prevent Python from hoarding memory
+ENV MALLOC_ARENA_MAX=2
+ENV PYTHONMALLOC=malloc
+
+# Prevent PyTorch from pre-allocating large memory blocks
+ENV PYTORCH_NO_CUDA_MEMORY_CACHING=1
+
 # Run the unified stack (Redis + Celery + FastAPI)
 CMD ["./start.sh"]
