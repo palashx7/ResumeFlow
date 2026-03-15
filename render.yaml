@@ -3,6 +3,7 @@ services:
   - type: redis
     name: resumeflow-redis
     plan: starter # Managed Redis is $3/mo on Render
+    ipAllowList: [] # Allow internal Render services to connect
 
   # 1. FastAPI Backend (Web Service)
   - type: web
@@ -20,7 +21,7 @@ services:
         fromService:
           type: redis
           name: resumeflow-redis
-          envVarKey: REDIS_URL
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
 
@@ -41,7 +42,7 @@ services:
         fromService:
           type: redis
           name: resumeflow-redis
-          envVarKey: REDIS_URL
+          property: connectionString
       - key: SECRET_KEY
         fromService:
           type: web
@@ -66,5 +67,4 @@ databases:
   # 4. PostgreSQL Database
   - name: resumeflow-db
     databaseName: resume_pipeline
-    user: postgres
     plan: free
