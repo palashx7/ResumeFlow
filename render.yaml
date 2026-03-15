@@ -1,4 +1,9 @@
 services:
+  # 5. Redis Queue
+  - type: redis
+    name: resumeflow-redis
+    plan: starter # Managed Redis is $3/mo on Render
+
   # 1. FastAPI Backend (Web Service)
   - type: web
     name: resumeflow-api
@@ -63,8 +68,3 @@ databases:
     databaseName: resume_pipeline
     user: postgres
     plan: free
-
-redis:
-  # 5. Redis Queue
-  - name: resumeflow-redis
-    plan: starter # Managed Redis is $3/mo on Render
