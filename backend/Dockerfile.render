@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies, including Redis for background queue
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    redis-server \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PyTorch CPU first (Memory optimization for Render's 512MB limit)
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY . .
+RUN chmod +x ./start.sh
+
+# Run the unified stack (Redis + Celery + FastAPI)
+CMD ["./start.sh"]
