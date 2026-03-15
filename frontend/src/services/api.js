@@ -1,4 +1,22 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// In production (when deployed to Render/Vercel), we want to use the same domain 
+// if next_public_api_url isn't explicitly set during build time.
+const getApiUrl = () => {
+    if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+
+    // If we are running in the browser and no env var is set, use the current domain
+    if (typeof window !== "undefined") {
+        // If we are on localhost, the backend is likely on 8000
+        if (window.location.hostname === "localhost") {
+            return "http://localhost:8000";
+        }
+        // In production on Render/Vercel, the API should be accessible on the same domain or via a proxy
+        return `https://resumeflow-backend-monolith.onrender.com`;
+    }
+
+    return "http://localhost:8000";
+};
+
+const API_URL = getApiUrl();
 
 /**
  * Get the stored auth token.
